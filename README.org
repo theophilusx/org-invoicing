@@ -1,0 +1,80 @@
+#+TITLE: Org Invoices
+
+* Org Invoices
+
+  For some time now, I have used /org-mode/ to generate invoices for billing
+  clients. This functionality has consisted mainly of a bunch of very hacky
+  /elisp/ functions, some yasnippet snippets and some ugly \Latex hacks.
+
+  The time has come to try and clean this up into something a little more
+  refined and robust. While I don't plan to create an /ELPA/ package or
+  contribute it to org-mode, I thought others might find it useful. The approach
+  is fairly straight-forward and I have found it works pretty well for my needs.
+  Milage for others may differ!
+
+* Features
+
+  Based on what I ahve in my hacky colleciton of elisp functions and snippets,
+  the following functionality should eventually make it into this repository.
+  All I really need to do is clean up the code, remove site specific
+  dependencies and hacks where possible and automate some minor functionality
+  which is currently managed via manual editing. The basic idea is
+
+  - For each client, you have a client org file that contains all the tasks to
+    be completed for the client. These are basic TODO items.
+  - Each client file has a *Client* heading where we track details regarding
+    client contact information (address, phone number, contacts emails etc). A
+    list of properties contains the name and address to be used on invoices.
+  - Each client file contains a *Notes* section used for general notes.
+  - Each client file contains a *Tasks* section. This is where the *TODOS* for
+    the client are recorded. A capture template is defined for this, though the
+    defulat org-mode template works fine.
+  - Each client file has an *Expenses* section. This is used for recording any
+    expenses incurred which need to be passed on to the client for payment (e.g.
+    travel expenses, accommodation expenses, etc). An *Expenses* capture
+    template is defined for capturing key details on expenses (such as links to
+    additional documents, such as receipts, that may need to be included in
+    expense submissions.
+  - Each client file contains an *Invoices* sections where invoices are tracked.
+    This section contains a property draw which contains details such as hourly
+    rate for charging, last invoice number for automatic invoice number
+    generation and the date covered in the last invoice. Inside this section are
+    sub-sections for each invoice which contains summary details about the
+    invoice (e.g. invoice period, expenses added to the invoice, hours/items
+    included in the invoice and a link to the org file which contains the actual
+    invoice and is the source for the PDF version of the invoice).
+  - Finally, the client file contains a *Clocks* section, which contains a clock
+    table which includes a summary of all time spent on tasks for the client.
+
+  Other sections can be added to the client file as required. The above are the
+  required sections. A yasnippet template is used to generate new client files
+  and setup the initial configuration.
+
+  When the time comes to generate a new invoice, you run the new invoice
+  command, which looks for any clocked work done since the last invoice was
+  generated and creates a new invoice with the new data. The generated invoice
+  contains a services section which summarises up to 3 levels of Tasks, adding
+  the times and multiplying that by the charge rate for the client to come up
+  with a total. The invoicing process supports the ability to add a tax (VAT or
+  GST tax) based on a rate set in the *Invoices* property section. This amount
+  is added to the total to get a final charge. Any expenses which have not been
+  submitted are then added (with an Expenses section added to the invoice) to
+  reach a final total due amount.
+
+* Installation
+
+  *FIXME*
+
+* Configuration
+
+  *FIXME*
+
+* Manual
+
+  *FIXME*
+
+* License
+
+  GPLv3 License.
+
+  \Copyright 2020 Tim Cross
