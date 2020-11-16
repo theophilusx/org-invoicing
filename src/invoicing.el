@@ -99,6 +99,28 @@ current value for last invoice number."
               "  \\end{tabularx}\n"
               "#+END_EXPORT:\n\n"))
 
+(defun oi-insert-clocktable (period scope &optional maxlevel)
+  (let ((org-clock-clocktable-default-properties
+         (list :scope scope :maxlevel (or maxlevel 3) :hidefiles t
+               :tstart (plist-get period :tstart) :tend (plist-get period :tend))))
+    (save-excursion
+      (insert "#+TBLNAME: services\n")
+      (org-dynamic-block-insert-dblock "clocktable")
+      (search-forward "#+END:")
+      (beginning-of-line)
+      (insert "#+TBLFM: @2$6..@>$6=vsum($2..$5)*$rate;t"
+              "::@1$6=string(\"Amount ($)\")"
+              "::@2$7..@>$7=$rate;%.2f::@1$7=string(\"Rate ($)\")\n")
+      (forward-line)
+      (insert "\n#+TBLNAME: totals\n"
+              "#+BEGIN: table\n"
+              "#+ATTR_LATEX :environment tabularx :center nil :width \\textwidth :align X r\n"
+              "|  | *Amount Due ($)* |\n"
+              "|--+------------------|\n"
+              "|  |                  |\n"
+              "#+TBLFM: @2$2=remote(services, @2$6);%.2f\n"
+              "#+END:\n\n"))))
+
 (defun oi-create-invoice (invoice-number client period path)
   (let ((inv-file (concat path invoice-number ".org")))
     (save-current-buffer
@@ -110,7 +132,7 @@ current value for last invoice number."
       (save-buffer)
       inv-file)))
 
-(defun oi-make-new-invoice-header ()
+(defun oi-make-new-invoice ()
   (interactive)
   (let ((inv (oi-next-invoice-number))
         (client (oi-get-client)))
@@ -120,8 +142,6 @@ current value for last invoice number."
     (org-demote)
     (insert (format "%s\n\n" inv))
     (let* ((period (oi-invoice-period))
-          (org-clock-clocktable-default-properties (append '(:scope file :maxlevel 3)
-                                                           period))
           (client-path (file-name-directory (buffer-file-name)))
           (i-file (oi-create-invoice inv client period client-path)))
       (insert (format "   Invoice: %s\n" inv))
@@ -130,4 +150,4 @@ current value for last invoice number."
                       (plist-get period :tend)))
       (insert (format "   ORG: [[file:%s][%s]]\n" i-file inv))
       (insert (format "   PDF: [[file:%s%2$s.pdf][%2$s]]\n\n" client-path inv))
-      (org-dynamic-block-insert-dblock "clocktable"))))
+      (oi-insert-clocktable period 'file))))
