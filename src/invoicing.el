@@ -112,11 +112,10 @@ current value for last invoice number."
 
 (defun oi-clocktable-formatter (ipos tables params)
   (save-excursion
-    (message "tables: %s" tables)
     (let* ((tbl (car tables))
           (entries (caddr tbl))
           (total-time (cadr tbl))
-          (rate 55.00))
+          (rate (string-to-number (or (org-entry-get ipos "Rate") "10.00"))))
       (goto-char ipos)
       (insert (format "#+CAPTION: Clock summary at %s\n"
                       (format-time-string (org-time-stamp-format t t))))
@@ -142,9 +141,9 @@ current value for last invoice number."
       (org-table-align))))
 
 (defun oi-insert-clocktable (period scope)
-  (let ((formatter oi-clocktable-formatter)
+  (let* ((formatter 'oi-clocktable-formatter)
         (org-clock-clocktable-default-properties
-         (list :scope scope :maxlevel (or maxlevel 3) :hidefiles t
+         (list :scope scope :maxlevel 3 :hidefiles t
                :tstart (plist-get period :tstart) :tend (plist-get period :tend)
                :formatter formatter)))
     (save-excursion
@@ -180,9 +179,14 @@ current value for last invoice number."
     (org-insert-heading-after-current)
     (org-demote)
     (insert (format "%s\n\n" inv))
-    (let* ((period (oi-invoice-period))
+    (let* ((entry (point))
+           (period (oi-invoice-period))
           (client-path (file-name-directory (buffer-file-name)))
           (i-file (oi-create-invoice inv client period client-path)))
+      (org-entry-put entry "Invoice" inv)
+      (org-entry-put entry "Start" (plist-get period :tstart))
+      (org-entry-put entry "End" (plist-get period :tend))
+      (org-entry-put entry "Rate" (format "%.2f" (cdr (assoc :rate client))))
       (insert (format "   Invoice: %s\n" inv))
       (insert (format "   Period %s to %s\n\n"
                       (plist-get period :tstart)
