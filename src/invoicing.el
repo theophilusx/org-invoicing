@@ -99,18 +99,57 @@ current value for last invoice number."
               "  \\end{tabularx}\n"
               "#+END_EXPORT:\n\n"))
 
-(defun oi-insert-clocktable (period scope &optional maxlevel)
-  (let ((org-clock-clocktable-default-properties
+(defun oi-calc-amount (rate min)
+  (if (or (= rate 0.00) (= min 0))
+      0.00
+    (* min (/ rate 60))))
+
+(defun oi-format-headline (headline level)
+  (format " \\_ %s%s" (if (= level 3)
+                          "  "
+                        "")
+          (org-shorten-string headline 40)))
+
+(defun oi-clocktable-formatter (ipos tables params)
+  (save-excursion
+    (message "tables: %s" tables)
+    (let* ((tbl (car tables))
+          (entries (caddr tbl))
+          (total-time (cadr tbl))
+          (rate 55.00))
+      (goto-char ipos)
+      (insert (format "#+CAPTION: Clock summary at %s\n"
+                      (format-time-string (org-time-stamp-format t t))))
+      (insert "| Item | Time    | | | Rate | Amount |\n"
+              "|      | (HH:MM) | | |  ($) |   ($)  |\n"
+              "|------+------+-+-+------+--------|\n")
+      (pcase-dolist (`(,level ,headline ,tgs ,ts ,time ,props) entries)
+        (when (> level 1)
+          (insert (format "| %s | %s | %s |\n"
+                          (oi-format-headline headline level)
+                          (if (= level 2)
+                              (format "  | %s |  "
+                                      (org-duration-from-minutes (or time 0) 'h:mm))
+                            (format "  |  | %s "
+                                    (org-duration-from-minutes (or time 0) 'h:mm)))
+                          (format " %.2f | %.2f " rate (oi-calc-amount rate time))))))
+      (insert "|----------+------+-+-+------+--------|\n"
+              (format "| *Totals* | *%s* | | | *%.2f* | *%.2f* |\n"
+                      (org-duration-from-minutes (or total-time 0) 'h:mm)
+                      (or rate 0.00)
+                      (oi-calc-amount rate total-time))
+              "|----------+------+-+-+------+--------|\n")
+      (org-table-align))))
+
+(defun oi-insert-clocktable (period scope)
+  (let ((formatter oi-clocktable-formatter)
+        (org-clock-clocktable-default-properties
          (list :scope scope :maxlevel (or maxlevel 3) :hidefiles t
-               :tstart (plist-get period :tstart) :tend (plist-get period :tend))))
+               :tstart (plist-get period :tstart) :tend (plist-get period :tend)
+               :formatter formatter)))
     (save-excursion
       (insert "#+TBLNAME: services\n")
       (org-dynamic-block-insert-dblock "clocktable")
-      (search-forward "#+END:")
-      (beginning-of-line)
-      (insert "#+TBLFM: @2$6..@>$6=vsum($2..$5)*$rate;t"
-              "::@1$6=string(\"Amount ($)\")"
-              "::@2$7..@>$7=$rate;%.2f::@1$7=string(\"Rate ($)\")\n")
       (forward-line)
       (insert "\n#+TBLNAME: totals\n"
               "#+BEGIN: table\n"
