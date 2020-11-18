@@ -156,6 +156,8 @@ plist with keys :tstart and :tend representing the invoicing period."
           (org-shorten-string headline 40)))
 
 (defun oi-clocktable-formatter (ipos tables params)
+  "A custom clocktable formatter which adds columns for rate and amount.
+Calculates amount due based on the rate set in 'oi-state'."
   (save-excursion
     (let* ((tbl (car tables))
           (entries (caddr tbl))
@@ -186,6 +188,10 @@ plist with keys :tstart and :tend representing the invoicing period."
       (org-table-align))))
 
 (defun oi-insert-clocktable (period scope)
+  "insert a customized clock table which include rate and amount columns.
+This function inserts the custom clocktable in the current buffer and adds
+an additional table called 'totals' to calculate tax and final amount due.
+Relies on data in the oi-state plist for rate, tax and tax_name."
   (let* ((formatter 'oi-clocktable-formatter)
         (org-clock-clocktable-default-properties
          (list :scope scope :maxlevel 3 :hidefiles t
@@ -207,6 +213,9 @@ plist with keys :tstart and :tend representing the invoicing period."
       (org-table-align))))
 
 (defun oi-create-invoice (invoice-number client period path)
+  "Creates a new invoice for the specified 'period'.
+Uses the specified 'invoice-number' and data in the 'client' plist to generate
+invoice details."
   (let ((inv-file (concat path invoice-number ".org"))
         (scope (list (buffer-name))))
     (save-current-buffer
@@ -220,6 +229,12 @@ plist with keys :tstart and :tend representing the invoicing period."
       inv-file)))
 
 (defun oi-make-new-invoice ()
+  "Generates a new invoice based on the current client org file.
+The invoice period is determined by the 'START_PERIOD' property in the Invoice
+entry. Client details are obtained from the Client table in the Client entry.
+Will update the 'START_PERIOD' property to the current date and time so that
+it becomes the start date for the next invoice run. Uses the TODO items in
+the Task entry to determine times for the invoice. "
   (interactive)
   (let ((inv (oi-next-invoice-number))
         (client (oi-get-client)))
