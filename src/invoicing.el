@@ -1,3 +1,5 @@
+(require 'org)
+
 (defgroup org-invoicing nil
   "Customization group for org-invoicing package."
   :version "27.1"
@@ -260,3 +262,5 @@ the Task entry to determine times for the invoice. "
       (insert (format "   ORG: [[file:%s][%s]]\n" i-file inv))
       (insert (format "   PDF: [[file:%s%2$s.pdf][%2$s]]\n\n" client-path inv))
       (oi-insert-clocktable period 'file))))
+
+(provide 'org-invoicing)
