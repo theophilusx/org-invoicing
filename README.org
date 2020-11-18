@@ -63,13 +63,70 @@
 
 * Installation
 
-  *FIXME*
+At this stage, the easiest way to install this module is probably to use git
+clone and then add the src directory to your load-path variable. Alternatively,
+put the org-invoicing.el file in a directory which is already in your load-path.
+You should then be able to load it by doing a (require 'org-invoicing).
+
+In addition to the oi-invoice.el file, there is also a Latex class file called
+invoicing.sty in the latex directory of the repository. This file needs to be
+placed somewhere on your system and the oi-invoice-style variable needs to be
+customized to point to that file.
 
 * Configuration
 
-  *FIXME*
+Once you have loaded the file, do M-x customize-group <ret> org-invoicing <ret>
+to set up a few things. In particular, you need to customise the following
+variables -
 
-* Manual
+- oi-company :: a plist of details about your company or consultancy e.g. name,
+ address, phone number, email address
+- oi-invoice-style :: a path to the invoice.sty file. Should not include the
+  /.sty/ extension. Must be a fully resolved filename.
+
+This library is a very opinionated library and does not have the extensive
+customisation support of the rest of org, at least not without hacking the elisp
+code. One area in particular which must conform to a specific format is the
+client org file. The library assumes the existence of specific tables,
+properties and headlines. Additional heading and tables can be added, but it
+must have a core basic layout. A basic example follows.
+
+#+begin_src org
+  ,#+TITLE: ACME Widgets Ltd
+  ,#+LATEX_HEADER:  \usepackage{tabularx}
+
+  ,* Client
+
+    ,#+NAME: Client
+    ,#+BEGIN table
+    | Name      | Acme Widgets Pty Ltd        |
+    | Address 1 | 99 Factory Rd.              |
+    | Address 2 | Industrious, DEVISTATE 9999 |
+    | Address_3 |                             |
+    | Rate      | 20.00                       |
+    | Tax       | 0.10                        |
+    | Tax Name  | GST                         |
+    | Terms     | 14                          |
+    ,#+END:
+
+  ,* Tasks
+
+  ,* Notes
+
+  ,* Expenses
+
+  ,* Invoices
+    :PROPERTIES:
+    :INVOICE_PREFIX: A
+    :LAST_INV_NO: 1
+    :PERIOD_START: <2020-11-11 Wed 17:48>
+    :END:
+
+
+  ,* Clock
+#+end_src
+
+* Usage
 
   *FIXME*
 
