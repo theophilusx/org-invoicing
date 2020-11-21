@@ -43,7 +43,10 @@ The string will have spaces replaced with '_' and all will be all lower case."
                        :total 0.00)))
 
 (defun oi-update-state (key val)
-  (setq oi-state (plist-put oi-state k v)))
+  (setq oi-state (plist-put oi-state key val)))
+
+(defun oi-get-state (key)
+  (plist-get oi-state key))
 
 (defun oi-table->list (table-name)
   "Return a list containing lists representing each row in a table.
@@ -51,8 +54,8 @@ The string elements are the cells for each row. The `table-name' argument
 specifies a unique table name to identify the table source."
   (save-excursion
     (goto-char (point-min))
-    (search-forward (format "#+NAME: %s" table-name))
-    (forward-line 2)
+    (search-forward (format "#+name: %s" table-name))
+    (forward-line 1)
     (seq-filter (lambda (elt)
                   (listp elt))
                 (org-table-to-lisp))))
@@ -173,7 +176,7 @@ Calculates amount due based on the rate set in 'oi-state'."
     (let* ((tbl (car tables))
           (entries (caddr tbl))
           (total-time (cadr tbl))
-          (rate (plist-get oi-state :rate)))
+          (rate (oi-get-state :rate)))
       (oi-update-state :amount (oi-calc-amount rate total-time))
       (goto-char ipos)
       (insert (format "#+CAPTION: Clock summary at %s\n"
@@ -208,42 +211,42 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
          (list :scope scope :maxlevel 3 :hidefiles t
                :tstart (plist-get period :tstart) :tend (plist-get period :tend)
                :formatter formatter)))
-    (insert "#+NAME: services\n")
+    (insert "#+name: services\n")
     (org-dynamic-block-insert-dblock "clocktable")
     (search-forward "#+END:")
     (forward-line 1)))
 
 (defun oi-insert-totals-table ()
   "Insert the table of total charges."
-  (when (< 0 (plist-get oi-state :tax))
-    (oi-update-state :tax-amount (* (plist-get oi-state :rate)
-                                    (plist-get oi-state :amount))))
-  (oi-update-state :total (+ (plist-get oi-state :amount)
-                             (plist-get oi-state :tax-amount)
-                             (plist-get oi-state :expense-amount)))
+  (message "oi-i-totals-table: %s" oi-state)
+  (when (< 0 (oi-get-state :tax-rate))
+    (oi-update-state :tax-amount (* (oi-get-state :tax-rate)
+                                    (oi-get-state :amount))))
+  (oi-update-state :total (+ (oi-get-state :amount)
+                             (oi-get-state :tax-amount)
+                             (oi-get-state :expense-amount)))
   (insert "\n#+name: totals\n"
           "#+begin: table\n"
           "#+attr_latex: :environment tabularx :center nil :width \\textwidth :align X l r\n"
           "|  |                  |\n"
           "|--+------------------|\n"
-          (format "|  | *Services* | %.2f  |\n" (plist-get oi-state :amount)))
-  (insert "| | *%s* | %.2f |\n"
-          (plist-get oi-state :tax-name)
-          (plist-get oi-state :tax-amount))
-  (when (< 0 (plist-get oi-state :expense-amount))
-    (insert "| | *Expenses* | %.2f |\n" (plist-get oi-state :expense-amount)))
-  (insert "| | *Total Due* | %.2f |\n" (plist-get oi-state :total))
-  (insert "#+end:\n")
+          (format "|  | *Services* | %.2f  |\n" (oi-get-state :amount))
+          (format "| | *%s* | %.2f |\n" (oi-get-state :tax-name) (oi-get-state :tax-amount)))
+  (when (< 0 (oi-get-state :expense-amount))
+    (insert (format "| | *Expenses* | %.2f |\n" (oi-get-state :expense-amount))))
+  (insert (format "| | *Total Due* | %.2f |\n" (oi-get-state :total))
+          "#+end:\n")
   (forward-line -1)
   (org-table-align))
 
 (defun oi-get-expense-data ()
   "Gather list of unclaimed expenses from current entry."
   (let* ((entry (point))
-        (desc (org-entry-get entry "Description"))
-        (date (org-entry-get entry "Date"))
-        (amount (org-entry-get entry "Amount")))
+         (desc (org-entry-get entry "Description"))
+         (date (org-entry-get entry "Date"))
+         (amount (org-entry-get entry "Amount")))
     (org-toggle-tag "CLAIMED")
+    (message "oi-get-eexpense-data Entry: %s Desc: %s Date: %s Amount: %s" entry desc date amount)
     (list :date date :description desc :amount amount)))
 
 (defun oi-gather-expenses ()
@@ -252,7 +255,9 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
   (save-excursion
     (goto-char (point-min))
     (search-forward "* Expenses")
-    (org-map-entries 'oi-get-expense-data "+EXPENSE-CLAIMED" 'tree)))
+    (let ((data (org-map-entries 'oi-get-expense-data "+EXPENSE-CLAIMED" 'tree)))
+      (message "oi-gather-expenses: data: %s" data)
+      data)))
 
 (defun oi-insert-expenses-table (exp)
   "Insert the expenses table. The `exp' argument is a list of plists."
@@ -260,31 +265,33 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
           "| *Date* | *Item* | *Amount* |\n"
           "|--------+--------+----------|\n")
   (seq-do (lambda (e)
+            (message "seq-do e: %s" e)
             (let ((date (plist-get e :date))
                   (desc (plist-get e :description))
-                  (amount (string-to-number (plist-get e :amount))))
+                  (amount (plist-get e :amount)))
               (insert "| %s | %s | %.2f |\n" date desc amount)
-              (oi-update-state :expense-amount (+ (plist-get oi-state :expense-amount)
-                                                  amount)))))
-  (insert (format "| | *Total Due* | %.2f |\n"
-                  (plist-get oi-state :expense-amount))))
+              (oi-update-state :expense-amount (+ (oi-get-state :expense-amount) amount))))
+          exp)
+  (insert (format "| | *Total Due* | %.2f |\n" (oi-get-state :expense-amount))))
 
-(defun oi-create-invoice (invoice-number client period &optional expens-data)
+(defun oi-create-invoice (invoice-number client period path &optional expense-data)
   "Creates a new invoice for the specified 'period'.
 Uses the specified 'invoice-number' and data in the 'client' plist to generate
 invoice details."
-  (let ((scope (list (buffer-name))))
-    (with-current-buffer (get-buffer-create (format "%s.org" invoice-name))
+  (let ((scope (list (buffer-name)))
+        (inv-file (concat path invoice-number ".org")))
+    (save-current-buffer
+      (find-file inv-file)
       (goto-char (point-min))
       (oi-insert-invoice-header invoice-number)
       (oi-insert-company-header)
       (oi-insert-client-header client)
       (oi-insert-clocktable period scope)
       (when expense-data
+        (message "oi-c-invoice expense data: %s" expense-data)
         (oi-insert-expenses-table expense-data))
       (oi-insert-totals-table)
-      (org-latex-export-to-pdf)
-      (buffer-name))))
+      (org-latex-export-to-pdf))))
 
 (defun oi-make-new-invoice ()
   "Generates a new invoice based on the current client org file.
@@ -295,6 +302,8 @@ it becomes the start date for the next invoice run. Uses the TODO items in
 the Task entry to determine times for the invoice. "
   (interactive)
   (let ((inv (oi-next-invoice-number))
+        (period (oi-invoice-period))
+        (exp-data (oi-gather-expenses))
         (client (oi-get-client)))
     (oi-reset-state (string-to-number (or (plist-get client :rate) 0.00))
                     (string-to-number (or (plist-get client :tax) 0.00))
@@ -305,13 +314,12 @@ the Task entry to determine times for the invoice. "
     (org-demote)
     (insert (format "%s\n\n" inv))
     (let* ((entry (point))
-           (period (oi-invoice-period))
-           (exp-data (oi-get-expense-data))
-           (i-buffer (oi-create-invoice inv client period client-path)))
+           (client-path (file-name-directory (buffer-file-name))))
+      (oi-create-invoice inv client period client-path exp-data)
       (org-entry-put entry "Invoice" inv)
       (org-entry-put entry "Start" (plist-get period :tstart))
       (org-entry-put entry "End" (plist-get period :tend))
-      (org-entry-put entry "Rate" (format "%.2f" (plist-get oi-state :rate)))
+      (org-entry-put entry "Rate" (format "%.2f" (oi-get-state :rate)))
       (insert (format "   Invoice: %s\n" inv))
       (insert (format "   Period %s to %s\n\n"
                       (plist-get period :tstart)
