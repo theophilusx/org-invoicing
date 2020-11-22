@@ -109,8 +109,6 @@ plist with keys :tstart and :tend representing the invoicing period."
   (insert (format "#+TITLE: %s\n" ino))
   (insert "#+OPTIONS: toc:nil title:nil num:nil\n"
           (format "#+LATEX_CLASS: %s\n" oi-invoice-class)
-          "#+LATEX_HEADER: \\usepackage{array}\n"
-          "#+LATEX_HEADER: \\usepackage{tabularx}\n"
           (format "#+LATEX_HEADER: \\usepackage{%s}\n\n"
                   (file-name-sans-extension (expand-file-name oi-invoice-style)))))
 
