@@ -1,0 +1,82 @@
+#+TITLE: A0001
+#+OPTIONS: toc:nil title:nil num:nil
+#+LATEX_CLASS: article
+#+LATEX_HEADER: \usepackage{/home/tim/.spacemacs.d/invoice/invoice}
+
+#+begin_export: latex
+  \hfil{\Huge\bf Invoice}\hfil\bigskip\break\hrule
+  Address line 1 \hfill My Company Name \newline
+  Address line 2 \hfill me@company.com \newline
+   \hfill Phone: 5555 555 555 \newline
+\newline
+#+end_export:
+
+#+begin_export: latex
+  \begin{tabularx}{\textwidth}{l X r}
+    \begin{tabular}{l}
+      \textbf{Invoice to} \\
+      \ Acme Widgets Pty Ltd \\
+      \ 99 Factory Rd. \\
+      \ Industrious, DEVISTATE 9999 \\
+      \  \\
+    \end{tabular}
+    & \ &
+    \begin{tabular}{|c|c|}
+      \hline
+      \textbf{Date} & \textbf{Invoice \#} \\
+      \hline
+      \today & A0001 \\
+      \hline
+      \textbf{Terms} & \textbf{Due Date} \\
+      \hline
+      14 Days & \AdvanceDate[14]\today \\
+     \hline
+    \end{tabular}
+  \end{tabularx}
+#+end_export:
+
+#+name: services
+#+BEGIN: clocktable :scope ("acme.org") :maxlevel 3 :hidefiles t :tstart "<2020-11-11 Wed 19:00>" :tend "<2020-11-22 Sun 19:17>" :formatter oi-clocktable-formatter
+#+CAPTION: Clock summary at [2020-11-22 Sun 19:17]
+| *Service*                                  |   | *Time (h:m)* |       | *Rate ($)* | *Amount ($)* |
+|--------------------------------------------+---+--------------+-------+------------+--------------|
+| \_ Create mail list for customers          |   |        18:52 |       |      55.00 |      1037.67 |
+| \_   Research Software options             |   |              |  0:48 |            |              |
+| \_   Install test syste                    |   |              |  4:21 |            |              |
+| \_   Document configuration                |   |              | 10:03 |            |              |
+| \_   Migrate to PROD                       |   |              |  3:39 |            |              |
+| \_ Cleanup templates                       |   |        12:25 |       |      55.00 |       682.92 |
+| \_ Use property values to manage invoices  |   |         0:21 |       |      55.00 |        19.25 |
+| \_ Write elisp functions to build invoices |   |         9:28 |       |      55.00 |       520.67 |
+| \_ Investigate Email Setup                 |   |        13:12 |       |      55.00 |       726.00 |
+| \_ A test for tasks                        |   |        10:50 |       |      55.00 |       595.83 |
+| \_ Add default resize handler to term...   |   |         3:38 |       |      55.00 |       199.83 |
+| \_ A test of todo capture                  |   |         0:01 |       |      55.00 |         0.92 |
+|--------------------------------------------+---+--------------+-------+------------+--------------|
+| *Totals*                                   |   |      *68:47* |       |    *55.00* |    *3783.08* |
+|--------------------------------------------+---+--------------+-------+------------+--------------|
+#+END:
+
+#+name: expenses
+#+begin: table
+#+attr_latex: :environment tabularx :center nil :width \textwidth :align l X r
+|     *Date* | *Expense*               | *Amount ($)* |
+|------------+-------------------------+--------------|
+| 2020-11-20 | Hotel Accommodation     |       440.00 |
+| 2020-11-20 | Plane Airfares - Sydney |       375.00 |
+|------------+-------------------------+--------------|
+|            | *Total Expenses*        |     *815.00* |
+|------------+-------------------------+--------------|
+#+end:
+
+
+#+name: totals
+#+begin: table
+#+attr_latex: :environment tabularx :center nil :width \textwidth :align X l r
+|   |             |         |
+|---+-------------+---------|
+|   | *Services*  | 3783.08 |
+|   | *GST*       |  378.31 |
+|   | *Expenses*  |  815.00 |
+|   | *Total Due* | 4976.39 |
+#+end:

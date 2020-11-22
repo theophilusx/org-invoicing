@@ -1,0 +1,209 @@
+#+TITLE: ACME Widgets Ltd
+#+LATEX_HEADER:  \usepackage{tabularx}
+
+* Client
+
+  #+name: Client
+  | Name      | Acme Widgets Pty Ltd        |
+  | Address 1 | 99 Factory Rd.              |
+  | Address 2 | Industrious, DEVISTATE 9999 |
+  | Address_3 |                             |
+  | Rate      | 55.00                       |
+  | Tax       | 0.10                        |
+  | Tax Name  | GST                         |
+  | Terms     | 14                          |
+
+* Tasks
+** STARTED Create mail list for customers
+   :LOGBOOK:
+   - State "STARTED"    from "TODO"       [2020-11-13 Fri 17:16]
+   - Refiled on [2020-11-13 Fri 15:14]
+   CLOCK: [2020-11-13 Fri 13:50]--[2020-11-13 Fri 13:51] =>  0:01
+   :END:
+
+   [[mu4e:msgid:87wnyqknqn.fsf@localhost][[Meta] Mailing list helper functions]]
+*** STARTED Research Software options
+    :LOGBOOK:
+    CLOCK: [2020-11-13 Fri 17:16]--[2020-11-13 Fri 18:04] =>  0:48
+    - State "STARTED"    from "TODO"       [2020-11-13 Fri 17:16]
+    :END:
+*** STARTED Install test syste
+    :LOGBOOK:
+    CLOCK: [2020-11-13 Fri 18:04]--[2020-11-13 Fri 22:25] =>  4:21
+    - State "STARTED"    from "TODO"       [2020-11-13 Fri 18:04]
+    :END:
+*** STARTED Document configuration
+    :LOGBOOK:
+    CLOCK: [2020-11-13 Fri 22:25]--[2020-11-14 Sat 08:28] => 10:03
+    - State "STARTED"    from "TODO"       [2020-11-13 Fri 22:25]
+    :END:
+*** STARTED Migrate to PROD
+    :LOGBOOK:
+    CLOCK: [2020-11-14 Sat 08:28]--[2020-11-14 Sat 12:07] =>  3:39
+    - State "STARTED"    from "TODO"       [2020-11-14 Sat 08:28]
+    :END:
+** STARTED Cleanup templates
+   :LOGBOOK:
+   CLOCK: [2020-11-14 Sat 12:07]--[2020-11-15 Sun 00:32] => 12:25
+   - State "STARTED"    from "TODO"       [2020-11-14 Sat 12:07]
+   - Refiled on [2020-11-13 Fri 15:15]
+   :END:
+
+   [[file:~/Documents/org-data/work/garry/client.org::+INCLUDE: /home/tim/.spacemacs.d/invoice/me.org]]
+** STARTED Use property values to manage invoices
+   :LOGBOOK:
+   CLOCK: [2020-11-15 Sun 00:32]--[2020-11-15 Sun 00:53] =>  0:21
+   - State "STARTED"    from "TODO"       [2020-11-15 Sun 00:32]
+   - Refiled on [2020-11-13 Fri 15:15]
+   :END:
+
+   [[info:org#Property Syntax][info:org#Property Syntax]]
+** STARTED Write elisp functions to build invoices
+   :LOGBOOK:
+   CLOCK: [2020-11-15 Sun 00:53]--[2020-11-15 Sun 10:21] =>  9:28
+   - State "STARTED"    from "TODO"       [2020-11-15 Sun 00:53]
+   - Refiled on [2020-11-13 Fri 15:15]
+   :END:
+
+   [[file:~/git/org-invoicing/src/invoicing.el][file:~/git/org-invoicing/src/invoicing.el]]
+** STARTED Investigate Email Setup
+   :LOGBOOK:
+   CLOCK: [2020-11-15 Sun 10:21]--[2020-11-15 Sun 23:32] => 13:11
+   - State "STARTED"    from "TODO"       [2020-11-15 Sun 10:21]
+   - Refiled on [2020-11-13 Fri 15:22]
+   - Refiled on [2020-11-13 Fri 15:13]
+   CLOCK: [2020-11-12 Thu 19:37]--[2020-11-12 Thu 19:38] =>  0:01
+   :END:
+
+   [[mu4e:msgid:CACsFhpYZpt=VMO++NsneMfgCmAL0JkcKfP3KEafm157++SPJwA@mail.gmail.com][Re: Upgrade Done]]
+
+** STARTED A test for tasks
+   :LOGBOOK:
+   CLOCK: [2020-11-15 Sun 23:32]--[2020-11-16 Mon 10:22] => 10:50
+   - State "STARTED"    from "TODO"       [2020-11-15 Sun 23:32]
+   - Refiled on [2020-11-13 Fri 17:08]
+   :END:
+
+   [[file:~/.spacemacs.d/my-org.el::org-outline-path-complete-in-steps nil]]
+** STARTED Add default resize handler to term objects
+   :LOGBOOK:
+   CLOCK: [2020-11-16 Mon 10:22]--[2020-11-16 Mon 14:00] =>  3:38
+   - State "STARTED"    from "TODO"       [2020-11-16 Mon 10:21]
+   - Refiled on [2020-11-13 Fri 15:34]
+   CLOCK: [2020-10-30 Fri 09:39]--[2020-10-30 Fri 09:40] =>  0:01
+   :END:
+
+   [[file:~/Projects/clojure/citronella/TODOs.org::*Tasks][Tasks]]
+** TODO A test of todo capture
+   :LOGBOOK:
+   - Refiled on [2020-11-19 Thu 18:14]
+   CLOCK: [2020-11-19 Thu 15:14]--[2020-11-19 Thu 15:15] =>  0:01
+   :END:
+
+   [[file:~/.spacemacs.d/my-org.el:::empty-lines-after 1 :clock-in t :clock-resume t))))]]
+* Notes
+* Expenses
+** Expense: Hotel Accommodation                             :EXPENSE:CLAIMED:
+   :PROPERTIES:
+   :Description: Hotel Accommodation
+   :Date:     [2020-11-20 Fri]
+   :Amount:   440.00
+   :END:
+   :LOGBOOK:
+   - Refiled on [2020-11-20 Fri 06:37]
+   :END:
+
+   | Date        | [2020-11-20 Fri]    |
+   | Description | Hotel Accommodation |
+   | Amount      | 440.00              |
+
+** Expense: Plane Airfares - Sydney                         :EXPENSE:CLAIMED:
+   :PROPERTIES:
+   :Description: Plane Airfares - Sydney
+   :Date:     [2020-11-20 Fri]
+   :Amount:   375.00
+   :END:
+   :LOGBOOK:
+   - Refiled on [2020-11-20 Fri 06:51]
+   :END:
+
+    | Date        | [2020-11-20 Fri]        |
+    | Description | Plane Airfares - Sydney |
+    | Amount      | 375.00                  |
+
+* Invoices
+  :PROPERTIES:
+  :INVOICE_PREFIX: A
+  :LAST_INV_NO: 1
+  :PERIOD_START: <2020-11-22 Sun 19:17>
+  :END:
+
+** A0001
+   :PROPERTIES:
+   :Invoice:  A0001
+   :Start:    <2020-11-11 Wed 19:00>
+   :End:      <2020-11-22 Sun 19:17>
+   :Rate:     55.00
+   :END:
+
+   Invoice: A0001
+   Period <2020-11-11 Wed 19:00> to <2020-11-22 Sun 19:17>
+
+   PDF: [[file:/home/tim/Documents/org-data/clients/A0001.pdf][A0001]]
+
+#+name: services
+#+BEGIN: clocktable :scope file :maxlevel 3 :hidefiles t :tstart "<2020-11-11 Wed 19:00>" :tend "<2020-11-22 Sun 19:17>" :formatter oi-clocktable-formatter
+#+CAPTION: Clock summary at [2020-11-22 Sun 19:17]
+| *Service*                                  |   | *Time (h:m)* |       | *Rate ($)* | *Amount ($)* |
+|--------------------------------------------+---+--------------+-------+------------+--------------|
+| \_ Create mail list for customers          |   |        18:52 |       |      55.00 |      1037.67 |
+| \_   Research Software options             |   |              |  0:48 |            |              |
+| \_   Install test syste                    |   |              |  4:21 |            |              |
+| \_   Document configuration                |   |              | 10:03 |            |              |
+| \_   Migrate to PROD                       |   |              |  3:39 |            |              |
+| \_ Cleanup templates                       |   |        12:25 |       |      55.00 |       682.92 |
+| \_ Use property values to manage invoices  |   |         0:21 |       |      55.00 |        19.25 |
+| \_ Write elisp functions to build invoices |   |         9:28 |       |      55.00 |       520.67 |
+| \_ Investigate Email Setup                 |   |        13:12 |       |      55.00 |       726.00 |
+| \_ A test for tasks                        |   |        10:50 |       |      55.00 |       595.83 |
+| \_ Add default resize handler to term...   |   |         3:38 |       |      55.00 |       199.83 |
+| \_ A test of todo capture                  |   |         0:01 |       |      55.00 |         0.92 |
+|--------------------------------------------+---+--------------+-------+------------+--------------|
+| *Totals*                                   |   |      *68:47* |       |    *55.00* |    *3783.08* |
+|--------------------------------------------+---+--------------+-------+------------+--------------|
+#+END:
+
+#+name: expenses
+#+begin: table
+#+attr_latex: :environment tabularx :center nil :width \textwidth :align l X r
+|     *Date* | *Expense*               | *Amount ($)* |
+|------------+-------------------------+--------------|
+| 2020-11-20 | Hotel Accommodation     |       440.00 |
+| 2020-11-20 | Plane Airfares - Sydney |       375.00 |
+|------------+-------------------------+--------------|
+|            | *Total Expenses*        |    *1630.00* |
+|------------+-------------------------+--------------|
+#+end:
+
+* Clock
+
+#+begin: clocktable :scope file :maxlevel 3
+#+CAPTION: Clock summary at [2020-11-21 Sat 16:42]
+| Headline                                    | Time       |       |       |
+|---------------------------------------------+------------+-------+-------|
+| *Total time*                                | *2d 20:48* |       |       |
+|---------------------------------------------+------------+-------+-------|
+| Tasks                                       | 2d 20:48   |       |       |
+| \_  Create mail list for customers          |            | 18:52 |       |
+| \_    Research Software options             |            |       |  0:48 |
+| \_    Install test syste                    |            |       |  4:21 |
+| \_    Document configuration                |            |       | 10:03 |
+| \_    Migrate to PROD                       |            |       |  3:39 |
+| \_  Cleanup templates                       |            | 12:25 |       |
+| \_  Use property values to manage invoices  |            |  0:21 |       |
+| \_  Write elisp functions to build invoices |            |  9:28 |       |
+| \_  Investigate Email Setup                 |            | 13:12 |       |
+| \_  A test for tasks                        |            | 10:50 |       |
+| \_  Add default resize handler to term...   |            |  3:39 |       |
+| \_  A test of todo capture                  |            |  0:01 |       |
+#+end:
