@@ -159,8 +159,8 @@ plist with keys :tstart and :tend representing the invoicing period."
 (defun oi-calc-amount (rate minutes)
   "Return amount based on hourly `rate' and number of `minutes'."
   (if (or (= rate 0.00) (= minutes 0))
-      0.00
-    (* minutes (/ rate 60))))
+      0
+    (round (* minutes (/ (* 100 rate) 60)))))
 
 (defun oi-format-headline (headline level)
   "Format a 'headline' with amount of indent determined by the 'level'."
@@ -190,14 +190,14 @@ Calculates amount due based on the rate set in 'oi-state'."
                           (if (= level 2)
                               (format "  | %s | | %.2f | %.2f "
                                       (org-duration-from-minutes (or time 0) 'h:mm)
-                                      rate (oi-calc-amount rate (or time 0)))
+                                      rate (/ (oi-calc-amount rate (or time 0)) 100.00))
                             (format "  |  | %s | | "
                                     (org-duration-from-minutes (or time 0) 'h:mm)))))))
       (insert "|----------+------+-+-+------+--------|\n"
               (format "| *Totals* |  | *%s* | | *%.2f* | *%.2f* |\n"
                       (org-duration-from-minutes (or total-time 0) 'h:mm)
                       (or rate 0.00)
-                      (oi-calc-amount rate total-time))
+                      (/ (oi-calc-amount rate total-time) 100.00))
               "|----------+------+-+-+------+--------|")
       (org-table-align))))
 
@@ -220,9 +220,11 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
   "Insert the table of total charges."
   (message "oi-i-totals-table: %s" oi-state)
   (when (< 0 (oi-get-state :tax-rate))
-    (oi-update-state :tax-amount (* (oi-get-state :tax-rate)
-                                    (oi-get-state :amount))))
-  (oi-update-state :total (+ (oi-get-state :amount)
+    (oi-update-state :tax-amount (/ (round
+                                     (* (oi-get-state :tax-rate)
+                                        (oi-get-state :amount)))
+                                    100.00)))
+  (oi-update-state :total (+ (/ (oi-get-state :amount) 100.00)
                              (oi-get-state :tax-amount)
                              (oi-get-state :expense-amount)))
   (insert "\n#+name: totals\n"
@@ -230,7 +232,7 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
           "#+attr_latex: :environment tabularx :center nil :width \\textwidth :align X l r\n"
           "|  |                  |\n"
           "|--+------------------|\n"
-          (format "|  | *Services* | %.2f  |\n" (oi-get-state :amount))
+          (format "|  | *Services* | %.2f  |\n" (/ (oi-get-state :amount) 100.00))
           (format "| | *%s* | %.2f |\n" (oi-get-state :tax-name) (oi-get-state :tax-amount)))
   (when (< 0 (oi-get-state :expense-amount))
     (insert (format "| | *Expenses* | %.2f |\n" (oi-get-state :expense-amount))))
@@ -262,7 +264,7 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
 (defun oi-insert-expenses-table (exp)
   "Insert the expenses table. The `exp' argument is a list of plists."
   (insert "#+name: expenses\n"
-          "| *Date* | *Item* | *Amount* |\n"
+          "| *Date* | *Expense* | *Amount ($)* |\n"
           "|--------+--------+----------|\n")
   (seq-do (lambda (e)
             (message "seq-do e: %s" e)
