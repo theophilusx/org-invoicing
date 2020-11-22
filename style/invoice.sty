@@ -1,0 +1,36 @@
+% Decrease Margins
+\usepackage[letterpaper,
+            tmargin=0.5in,
+            bmargin=1.0in,
+            lmargin=1.0in,
+            rmargin=1.0in,
+            headheight=0in,
+            headsep=0in,
+            footskip=0.0in]{geometry}
+
+% Hide Table Captions
+\usepackage[labelformat=empty, textformat=empty]{caption}
+
+% Calculate Date Dynamically
+\usepackage{advdate}
+
+% Hide Columns Using Align H
+\usepackage{array}
+\usepackage{tabularx}
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}
+
+% Increase Space Between Paragraphs
+\parskip 0.1in
+
+% Increase Line Spacing
+\linespread{1.1}
+
+% Manual Indent
+\newlength\tindent
+\setlength{\tindent}{10pt}
+\setlength{\parindent}{0pt}
+\renewcommand{\indent}{\hspace*{\tindent}}
+
+% Aliases
+\newcommand{\pair}[2]{\noindent {\bf #1:} \vspace{5pt} \\ \indent #2 \\}
+\pagenumbering{gobble}
