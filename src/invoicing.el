@@ -147,7 +147,7 @@ plist with keys :tstart and :tend representing the invoicing period."
               "      \\hline\n"
               "      \\textbf{Terms} & \\textbf{Due Date} \\\\\n"
               "      \\hline\n"
-              (format "      %1$s & \\AdvanceDate[%1$s]\\today \\\\\n"
+              (format "      %1$s Days & \\AdvanceDate[%1$s]\\today \\\\\n"
                       (plist-get client :terms))
               "     \\hline\n"
               "    \\end{tabular}\n"
