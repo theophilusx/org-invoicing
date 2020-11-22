@@ -181,7 +181,7 @@ Calculates amount due based on the rate set in 'oi-state'."
       (goto-char ipos)
       (insert (format "#+CAPTION: Clock summary at %s\n"
                       (format-time-string (org-time-stamp-format t t))))
-      (insert "| Item |  | Time (h:m) | | Rate ($) | Amount ($) |\n"
+      (insert "| *Service* |  | *Time (h:m)* | | *Rate ($)* | *Amount ($)* |\n"
               "|------+--+------------+-+----------+------------|\n")
       (pcase-dolist (`(,level ,headline ,tgs ,ts ,time ,props) entries)
         (when (> level 1)
@@ -218,7 +218,6 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
 
 (defun oi-insert-totals-table ()
   "Insert the table of total charges."
-  (message "oi-i-totals-table: %s" oi-state)
   (when (< 0 (oi-get-state :tax-rate))
     (oi-update-state :tax-amount (/ (round
                                      (* (oi-get-state :tax-rate)
@@ -248,7 +247,6 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
          (date (org-entry-get entry "Date"))
          (amount (org-entry-get entry "Amount")))
     (org-toggle-tag "CLAIMED")
-    (message "oi-get-eexpense-data Entry: %s Desc: %s Date: %s Amount: %s" entry desc date amount)
     (list :date date :description desc :amount amount)))
 
 (defun oi-gather-expenses ()
@@ -257,24 +255,29 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
   (save-excursion
     (goto-char (point-min))
     (search-forward "* Expenses")
-    (let ((data (org-map-entries 'oi-get-expense-data "+EXPENSE-CLAIMED" 'tree)))
-      (message "oi-gather-expenses: data: %s" data)
-      data)))
+    (org-map-entries 'oi-get-expense-data "+EXPENSE-CLAIMED" 'tree)))
 
 (defun oi-insert-expenses-table (exp)
   "Insert the expenses table. The `exp' argument is a list of plists."
-  (insert "#+name: expenses\n"
+  (insert "\n#+name: expenses\n"
+          "#+begin: table\n"
+          "#+attr_latex: :environment tabularx :center nil :width \\textwidth :align l X r\n"
           "| *Date* | *Expense* | *Amount ($)* |\n"
           "|--------+--------+----------|\n")
   (seq-do (lambda (e)
-            (message "seq-do e: %s" e)
             (let ((date (plist-get e :date))
                   (desc (plist-get e :description))
-                  (amount (plist-get e :amount)))
-              (insert "| %s | %s | %.2f |\n" date desc amount)
+                  (amount (string-to-number (or (plist-get e :amount) 0.00))))
+              (insert (format "| %s | %s | %.2f |\n" date desc amount))
               (oi-update-state :expense-amount (+ (oi-get-state :expense-amount) amount))))
           exp)
-  (insert (format "| | *Total Due* | %.2f |\n" (oi-get-state :expense-amount))))
+  (insert "|--+--+--|\n"
+          (format "| | *Total Expenses* | *%.2f* |\n" (oi-get-state :expense-amount))
+          "|--+--+--|\n"
+          "#+end:\n\n")
+  (forward-line -2)
+  (org-table-align)
+  (forward-line 2))
 
 (defun oi-create-invoice (invoice-number client period path &optional expense-data)
   "Creates a new invoice for the specified 'period'.
@@ -290,7 +293,6 @@ invoice details."
       (oi-insert-client-header client)
       (oi-insert-clocktable period scope)
       (when expense-data
-        (message "oi-c-invoice expense data: %s" expense-data)
         (oi-insert-expenses-table expense-data))
       (oi-insert-totals-table)
       (org-latex-export-to-pdf))))
@@ -329,6 +331,6 @@ the Task entry to determine times for the invoice. "
       (insert (format "   PDF: [[file:%s%2$s.pdf][%2$s]]\n\n" client-path inv))
       (oi-insert-clocktable period 'file)
       (when exp-data
-        (oi-insert-expense-table exp-data)))))
+        (oi-insert-expenses-table exp-data)))))
 
 (provide 'org-invoicing)
