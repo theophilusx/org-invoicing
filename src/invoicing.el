@@ -244,7 +244,7 @@ Relies on data in the oi-state plist for rate, tax and tax_name."
   "Gather list of unclaimed expenses from current entry."
   (let* ((entry (point))
          (desc (org-entry-get entry "Description"))
-         (date (org-entry-get entry "Date"))
+         (date (substring (org-entry-get entry "Date") 1 11))
          (amount (org-entry-get entry "Amount")))
     (org-toggle-tag "CLAIMED")
     (list :date date :description desc :amount amount)))
